@@ -1,0 +1,70 @@
+from browser import document as doc
+from browser import html
+import math
+
+canvas = html.CANVAS(width = 600, height = 400)
+canvas.id = "taiwan_flag"
+brython_div = doc["brython_div1"]
+brython_div <= canvas
+
+canvas = doc["taiwan_flag"]
+ctx = canvas.getContext("2d")
+flag_w = canvas.width
+flag_h = canvas.height
+
+# 白日位置
+circle_x = flag_w/4
+circle_y = flag_h/4
+
+# --- 旋轉畫布 90 度 ---
+ctx.save()
+ctx.translate(flag_w/2, flag_h/2)
+ctx.rotate(math.pi/2)  
+ctx.translate(-flag_w/2, -flag_h/2)
+
+# --- 紅底 ---
+ctx.fillStyle='rgb(255, 0, 0)'
+ctx.fillRect(0,0,flag_w,flag_h)
+
+# --- 青天 ---
+ctx.fillStyle='rgb(0, 0, 150)'
+ctx.fillRect(0,0,flag_w/2,flag_h/2)
+
+# --- 白日光芒 ---
+ctx.fillStyle = '#fff'
+ctx.beginPath()
+num_rays = 12
+outer_radius = flag_w/8
+inner_radius = outer_radius * 0.5
+for i in range(num_rays):
+    angle = i * 2 * math.pi / num_rays
+    x1 = circle_x + outer_radius * math.cos(angle)
+    y1 = circle_y + outer_radius * math.sin(angle)
+    angle_left = angle - math.pi / num_rays
+    angle_right = angle + math.pi / num_rays
+    x2 = circle_x + inner_radius * math.cos(angle_left)
+    y2 = circle_y + inner_radius * math.sin(angle_left)
+    x3 = circle_x + inner_radius * math.cos(angle_right)
+    y3 = circle_y + inner_radius * math.sin(angle_right)
+    ctx.moveTo(circle_x, circle_y)
+    ctx.lineTo(x2, y2)
+    ctx.lineTo(x1, y1)
+    ctx.lineTo(x3, y3)
+    ctx.closePath()
+ctx.fill()
+
+# --- 白日藍圈 ---
+ctx.beginPath()
+ctx.arc(circle_x, circle_y, flag_w*17/240, 0, math.pi*2, True)
+ctx.closePath()
+ctx.fillStyle = 'rgb(0, 0, 149)'
+ctx.fill()
+
+# --- 白日白心 ---
+ctx.beginPath()
+ctx.arc(circle_x, circle_y, flag_w/16, 0, math.pi*2, True)
+ctx.closePath()
+ctx.fillStyle = '#fff'
+ctx.fill()
+
+ctx.restore()
